@@ -1,0 +1,244 @@
+import java.util.Scanner;
+
+public class CarDealership extends Car {
+
+	// Declaring variables
+	protected static int maxNbCars, enterCars, userChoice, option2Choice; 
+	protected static String enteredPW, theMake, theModel;
+	protected static int carNb, thePrice, theYear;
+	protected static int minPrice, maxPrice;
+	protected static int lastIndex;
+
+	protected static Scanner keyIn = new Scanner(System.in);
+	protected static int nbAttempts, totalAttempts = 0;
+	protected static final String PASSWORD = "comp249S19";
+	protected static int i;
+	protected static Car[] carDatabase;
+
+	/** 
+	 * Prompt user until he/she select an option on the main menu (choices 1-5). 
+	 */
+	public static void mainMenu() {
+		do {
+			System.out.println();
+			System.out.println("What do you want to do?");
+			System.out.println("   1. Enter a new Car to the inventory (password required)");
+			System.out.println("   2. Change information of an existing Car (password required)");
+			System.out.println("   3. Display all the Cars with the specified make and model");
+			System.out.println("   4. Display all the Cars within the given price range");
+			System.out.println("   5. Quit");
+			System.out.print("Please enter your choice > ");
+			userChoice = keyIn.nextInt();
+		} while (userChoice < 1 || userChoice > 5);
+	}
+	
+	/**
+	 *  Prompt user Car 
+	 */
+	protected static void option1() {
+		// Asking for password
+		System.out.print("Please enter the password: ");
+		enteredPW = keyIn.next();
+		
+		// Reseting number of attempts to 0 
+		nbAttempts = 0;
+		
+		// Checking if password is incorrect 
+		if (!PASSWORD.equals(enteredPW)) {
+			nbAttempts++;
+			totalAttempts++;
+		}
+		
+		// If password is incorrect, ask for another password (max of 3 attempts)
+		while (!PASSWORD.equals(enteredPW) && nbAttempts < 3) {
+			System.out.print("Wrong password. Please try again: ");
+			enteredPW = keyIn.next();
+			nbAttempts++;
+			totalAttempts++;
+		}
+		
+		// If password is correct, proceed as usual
+		if (PASSWORD.equals(enteredPW)) {
+			System.out.println('\n' + "Password accepted");
+			System.out.print("How many cars will you like to enter? ");
+			enterCars = keyIn.nextInt();
+			lastIndex = enterCars + Car.findNumberOfCreatedCars();
+
+			if (enterCars > (maxNbCars - Car.findNumberOfCreatedCars())) {
+				System.out.println("Not enough space to add all the cars. Only able to add "
+						+ (maxNbCars - Car.findNumberOfCreatedCars()) + " cars" + '\n');
+				lastIndex = maxNbCars;
+			}
+
+			// Entering info for each car
+			while (Car.findNumberOfCreatedCars() < lastIndex) {
+				i = Car.findNumberOfCreatedCars();
+				// User prompt for information about car i
+				System.out.println("Enter info for car " + i + ":");
+				System.out.print("Make: ");
+				theMake = keyIn.next();
+				System.out.print("Model: ");
+				theModel = keyIn.next();
+				System.out.print("Year: ");
+				theYear = keyIn.nextInt();
+				System.out.print("Price: ");
+				thePrice = keyIn.nextInt();
+				System.out.println();
+				// Adding car to the database
+				carDatabase[i] = new Car(theMake, theModel, theYear, thePrice);
+			}
+
+		} else if (totalAttempts >= 12) {
+			// If total attempts is 12, exit the program
+			keyIn.close();
+			System.out.println("Program detected suspicious activity and is terminating!");
+			System.exit(0);
+		}
+
+	}
+
+	// OPTION 2
+	protected static void option2() {
+		// Prompting user for password 
+		System.out.print("Please enter the password: ");
+		enteredPW = keyIn.next();
+		nbAttempts = 1;
+		
+		// If password is incorrect, ask for another password (max of 3 attempts)
+		while(!PASSWORD.equals(enteredPW) && nbAttempts < 3) {	
+			System.out.println("Wrong password. Please try again.");
+			enteredPW = keyIn.next();
+			nbAttempts += 1;	
+		}
+		
+		if(PASSWORD.equals(enteredPW)) {
+			// If password is correct... 
+			System.out.print("Which car would you like to update? ");
+			carNb = keyIn.nextInt();
+
+			// Checking if the number is valid
+			while(carNb >= maxNbCars || carNb < 0 || carDatabase[carNb] == null ) {
+				System.out.println("There is no car at this index.");
+				System.out.print("Please re-enter a car number, or return to the main menu by enetering \"-1\": ");
+				carNb = keyIn.nextInt();
+				// If the user wants to quit, then break this loop. 
+				if (carNb == -1)
+					break; 
+			}
+			
+			// If the user wants to quit, then return to the main menu
+			if (carNb != -1) {
+				
+			// Otherwise, proceed as usual 
+			System.out.println("\nHere is the current information for the car you entered:");
+			System.out.println("Car: #" + carNb);
+			System.out.println(carDatabase[carNb]);
+			
+			while(true) {
+				System.out.println("\nWhat information would you like to change?");
+				System.out.println("   1. Car make");
+				System.out.println("   2. Car model");
+				System.out.println("   3. Car year");
+				System.out.println("   4. Car price");
+				System.out.println("   5. Quit");
+				System.out.print("Please enter your choice > ");
+				
+				option2Choice = keyIn.nextInt();
+				
+				if (option2Choice == 1) {
+					// Changing car make 
+					System.out.print("What would you like to change the car make to? ");
+					theMake = keyIn.next();
+					carDatabase[carNb].setMake(theMake);
+				} else if (option2Choice == 2) {
+					// Changing car model
+					System.out.print("What would you like to change the car model to? ");
+					theModel = keyIn.next();
+					carDatabase[carNb].setModel(theModel);
+				} else if (option2Choice == 3) {
+					// Changing car year
+					System.out.print("What would you like to change the car year to? ");
+					theYear = keyIn.nextInt();
+					carDatabase[carNb].setYear(theYear);						
+				} else if (option2Choice == 4) {
+					// Changing car price
+					System.out.print("What would you like to change the car price to? ");
+					thePrice = keyIn.nextInt();
+					carDatabase[carNb].setPrice(thePrice);
+				} else if (option2Choice == 5) {
+					// Quit operation and go back to main menu
+					break;
+				} else {
+					// If number entered not in 1-5, ask for another number 
+					continue;
+				}
+				
+				// For numbers entered in 1-4, display the updated car info and return to option 2 menu
+				System.out.println("\nHere is the updated car information:");
+				System.out.println("Car: #" + carNb);
+				System.out.println(carDatabase[carNb]);
+			}
+			
+		  }
+			
+		} else {
+			// If 3 incorrect passwords entered 
+			System.out.println("Wrong password 3 times. Back to main menu.");
+		}
+		
+	}
+	
+	/**
+	 * OPTION 3: Prompts user for Car make and model, and displays all Cars with the 
+	 */
+	protected static void option3() {
+		// User prompt for make
+		System.out.print("Enter make: ");
+		theMake = keyIn.next();
+		// User prompt for model
+		System.out.print("Enter model: ");
+		theModel = keyIn.next();
+		// Displaying cars that have the same make and model
+		for(i = 0; i < maxNbCars; i++) {
+			if (carDatabase[i] == null)
+				continue;
+			else if (carDatabase[i].equals(new Car(theMake, theModel, 0, 0))) {
+				System.out.println("\nCar: # " + i);
+				System.out.println(carDatabase[i]);
+			}
+		}
+	}
+	
+	/**
+	 * OPTION 4: Prompts user for minimum and maximum price, and displays all cars within the price range. 
+	 */
+	protected static void option4() {
+		// User prompt for minimum price
+		System.out.print("Enter minimum price: ");
+		minPrice = keyIn.nextInt();
+		// User prompt for maximum price
+		System.out.print("Enter maximum price: ");
+		maxPrice = keyIn.nextInt();
+		// Displaying cars that are within the given price range 
+		for(i = 0; i < maxNbCars; i++) {
+			if (carDatabase[i] == null)
+				continue;
+			else if (carDatabase[i].getPrice() >= minPrice && carDatabase[i].getPrice() <= maxPrice) {
+				System.out.println("\nCar: # " + i);	
+				System.out.println(carDatabase[i]);	
+			}
+		}
+	}
+	
+	/** 
+	 * Option 5 ends the program. 
+	 */
+	protected static void option5() {
+		if (userChoice == 5) {
+			keyIn.close();
+			System.out.println("\nAll done!");
+			System.exit(0);
+		}
+	}
+
+}
