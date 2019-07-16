@@ -4,12 +4,10 @@ public class Car {
 	private String model;
 	private int year;
 	private int price;
-	
 	private static int nbCarsCreated = 0;
-	
 
-	/** Default constructor for Car class 
-	 * 
+	/** 
+	 * Default constructor for Car class 
 	 */
 	public Car() {
 		this.make = "";
@@ -46,7 +44,6 @@ public class Car {
 		this.price = car2.price;
 		nbCarsCreated += 1;
 	}
-	
 	
 	/** 
 	 * @return this Car's make.
@@ -125,7 +122,6 @@ public class Car {
 		return(this.make == car2.make && this.model == car2.model);
 	}
 	
-
 	/**
 	 * Gives the number of Car objects that have been created (at the time this method is called). 
 	 * @return Number of Car objects created (at the time this method is called)
@@ -133,6 +129,5 @@ public class Car {
 	public static int findNumberOfCreatedCars(){ 
 		return (nbCarsCreated);
 	}
-	
-	
+
 }
